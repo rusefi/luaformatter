@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 public class LuaFormatterTest {
     @Test
-    public void testMethodArgumentsFormatting() throws Exception {
+    public void testMethodArgumentsFormatting() {
         String code = "function onCanRx(bus, id)\n" +
                 "end";
         String formatted = new LuaFormatter().format(code, new LuaFormatter.Env());
@@ -16,7 +16,7 @@ public class LuaFormatterTest {
     }
 
     @Test
-    public void testArrayFormatting() throws Exception {
+    public void testArrayFormatting() {
         String code = "function onCanRx()\n" +
                 "    canState = data[1]\n" +
                 "end";

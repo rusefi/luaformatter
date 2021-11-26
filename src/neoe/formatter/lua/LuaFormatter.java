@@ -1,11 +1,6 @@
 package neoe.formatter.lua;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -156,14 +151,14 @@ public class LuaFormatter {
 	StringBuilder sb;
 	LuaTokens tokens;
 
-	public String format(String txt, Env env) throws Exception {
+	public String format(String txt, Env env) {
 		sb = new StringBuilder();
 		tokens = new LuaTokens(txt);
 		loop(null, null, null, env);
 		return sb.toString();
 	}
 
-	private void loop(LuaTokenType preType, String until, LuaTokenType operator, Env env) throws Exception {
+	private void loop(LuaTokenType preType, String until, LuaTokenType operator, Env env) {
 		env.lastType = preType;
 		while (true) {
 			LuaTokens.TypeAndValue tt = tokens.next();
@@ -176,8 +171,12 @@ public class LuaFormatter {
 				break;
 
 			if (DEBUG) {
-				debug.write(String.format("t:%s,v:%s\n", type, token));
-				debug.flush();
+				try {
+					debug.write(String.format("t:%s,v:%s\n", type, token));
+					debug.flush();
+				} catch (IOException e) {
+					System.out.println("Unexpected e");
+				}
 			}
 
 			addToken(env, tt);
@@ -201,7 +200,7 @@ public class LuaFormatter {
 		Stack stack = new Stack();
 	}
 
-	private void addToken(Env env, LuaTokens.TypeAndValue tt) throws Exception {
+	private void addToken(Env env, LuaTokens.TypeAndValue tt) {
 		LuaTokenType type = tt.getType();
 		String token = tt.getValue();
 		env.forcedChangeLine = false;
@@ -421,6 +420,7 @@ public class LuaFormatter {
 			if (currentToken != null) {
 				if (")".equals(currentToken.getValue()) ||
 						"(".equals(currentToken.getValue()) ||
+						".".equals(currentToken.getValue()) ||
 						",".equals(currentToken.getValue()) ||
 						"[".equals(currentToken.getValue()) ||
 						"]".equals(currentToken.getValue())
